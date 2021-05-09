@@ -9,81 +9,36 @@ const { sequelize } = require("../models");
 const { isNotLoggedIn, isLoggedIn } = require("./middlewares");
 const User = require("../models/user");
 const TodayCount = require("../models/todayCount");
-// const Workspace = require("../models/workspace");
-// const Channel = require("../models/channel");
-// const ChannelChat = require("../models/channelChat");
-// const DM = require("../models/dm");
 
 const router = express.Router();
 
-router.get("/todayCount", async (req, res, next) => {
+router.get("/products", isLoggedIn , async (req, res, next) => {
   try {
-    const todayCounts = await TodayCount.findAll(
-      { attributes: ['productId', 'productName' ], where: {cart:0}});
+    let todayCounts = await TodayCount.findAll(
+      { attributes: ['productId', 'productName', 'today' ]});
+    
+    todayCounts = todayCounts.filter((item, i) => {
+      return (
+        todayCounts.findIndex((item2, j) => {
+          return item.dataValues.productId === item2.dataValues.productId;
+        }) === i
+      );
+    });
     return res.json(todayCounts);
   } catch (error) {
     next(error);
   }
 });
-// router.get("/workspaces", isLoggedIn, async (req, res, next) => {
-//   try {
-//     const workspaces = await Workspace.findAll({
-//       include: [
-//         {
-//           model: User,
-//           as: "Members",
-//           attributes: ["id"],
-//           through: {
-//             where: { UserId: req.user.id },
-//             attributes: ["UserId"],
-//           },
-//         },
-//       ],
-//     });
-//     return res.json(workspaces);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
 
-// router.post("/workspaces", isLoggedIn, async (req, res, next) => {
-//   const t = await sequelize.transaction();
-//   try {
-//     const exWorkspace = await Workspace.findOne({
-//       where: { url: req.body.url },
-//     });
-//     if (exWorkspace) {
-//       await t.rollback();
-//       return res.status(404).send("사용중인 워크스페이스 URL입니다.");
-//     }
-//     const workspace = await Workspace.create(
-//       {
-//         name: req.body.workspace,
-//         url: req.body.url,
-//         OwnerId: req.user.id,
-//       },
-//       {
-//         transaction: t,
-//       }
-//     );
-//     await workspace.addMembers(req.user.id, { transaction: t });
-//     const channel = await Channel.create(
-//       {
-//         name: "일반",
-//         WorkspaceId: workspace.id,
-//       },
-//       {
-//         transaction: t,
-//       }
-//     );
-//     await channel.addMembers(req.user.id, { transaction: t });
-//     await t.commit();
-//     return res.json(workspace);
-//   } catch (error) {
-//     await t.rollback();
-//     next(error);
-//   }
-// });
+router.get("/product/:productId", isLoggedIn , async (req, res, next) => {
+  try {
+    const todayCounts = await TodayCount.findAll(
+      { attributes: ['productId', 'productName', 'today', 'cart' , 'wish', 'access' ], where: { productId: req.params.productId }, order: [["today", "ASC"]],});
+    return res.json(todayCounts);
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.get("/users", (req, res, next) => {
   return res.json(req.user || false);

@@ -13,7 +13,6 @@ dotenv.config();
 const { sequelize } = require("./models");
 const passportConfig = require("./passport");
 const apiRouter = require("./routes/api");
-// const webSocket = require("./socket");
 
 const app = express();
 app.set("PORT", process.env.PORT || 3095);
@@ -41,7 +40,6 @@ if (prod) {
   );
 }
 app.use(express.static(path.join(__dirname, "public")));
-// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
@@ -69,5 +67,3 @@ app.get("*", (req, res, next) => {
 const server = app.listen(app.get("PORT"), () => {
   console.log(`listening on port ${app.get("PORT")}`);
 });
-
-// webSocket(server, app);
