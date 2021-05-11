@@ -57,10 +57,10 @@ const sessionOption = {
     httpOnly: true,
   },
 };
-// if (prod) {
-//   sessionOption.cookie.secure = true;
-//   sessionOption.cookie.proxy = true;
-// }
+if (prod) {
+  sessionOption.cookie.secure = true;
+  sessionOption.cookie.proxy = true;
+}
 app.use(session(sessionOption));
 app.use(passport.initialize());
 app.use(passport.session());
