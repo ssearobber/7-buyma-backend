@@ -17,6 +17,7 @@ router.get("/products", isLoggedIn , async (req, res, next) => {
     let todayCounts = await TodayCount.findAll(
       { attributes: ['productId', 'productName', 'today' ]});
     
+    // productId의 중복을 제거한 모든 레코드 취득
     todayCounts = todayCounts.filter((item, i) => {
       return (
         todayCounts.findIndex((item2, j) => {
