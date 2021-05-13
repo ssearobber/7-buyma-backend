@@ -11,7 +11,7 @@ const TodayCount = require("../models/todayCount");
 
 const router = express.Router();
 
-router.get("/products", isNotLoggedIn , async (req, res, next) => {
+router.get("/products", isLoggedIn , async (req, res, next) => {
   try {
     let query = `
       SELECT distinct productId FROM todayCount
