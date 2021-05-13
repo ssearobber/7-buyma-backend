@@ -24,26 +24,15 @@ router.get("/products", isLoggedIn , async (req, res, next) => {
     
     let productIdArray = productIds.map(({ productId }) => productId)
 
-    // let yesterday = dayjs().subtract(1, 'day').format("YYYY-MM-DD");
     let yesterday = dayjs().subtract(1, 'day');
     console.log("yesterday", yesterday);
 
     let todayCounts = await TodayCount.findAll(
       { attributes: ['productId', 'productName', 'today', 'cart', 'wish', 'access'], 
         where: {[Op.and]: [{ today: {[Op.gte]: yesterday }},{productId : {[Op.in]: productIdArray}}]},
-        order: [["access", "ASC"]]
+        order: [["access", "DESC"]]
       });
     
-      // console.log("todayCounts",todayCounts);
-    
-    // productId의 중복을 제거한 모든 레코드 취득
-    // todayCounts = todayCounts.filter((item, i) => {
-    //   return (
-    //     todayCounts.findIndex((item2, j) => {
-    //       return item.dataValues.productId === item2.dataValues.productId;
-    //     }) === i
-    //   );
-    // });
     return res.json(todayCounts);
   } catch (error) {
     next(error);
