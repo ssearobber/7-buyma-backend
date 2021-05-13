@@ -1,9 +1,8 @@
-const { Op } = require("sequelize");
+const { Op, QueryTypes } = require("sequelize");
 const express = require("express");
 const passport = require("passport");
 const bcrypt = require("bcrypt");
-const fs = require("fs");
-const path = require("path");
+const dayjs = require("dayjs");
 
 const { sequelize } = require("../models");
 const { isNotLoggedIn, isLoggedIn } = require("./middlewares");
@@ -12,19 +11,39 @@ const TodayCount = require("../models/todayCount");
 
 const router = express.Router();
 
-router.get("/products", isLoggedIn , async (req, res, next) => {
+router.get("/products", isNotLoggedIn , async (req, res, next) => {
   try {
+    let query = `
+      SELECT distinct productId FROM todayCount
+    `;
+    let productIds = await sequelize.query(query, 
+        {
+          type: QueryTypes.SELECT, 
+          raw: true
+    });
+    
+    let productIdArray = productIds.map(({ productId }) => productId)
+
+    // let yesterday = dayjs().subtract(1, 'day').format("YYYY-MM-DD");
+    let yesterday = dayjs().subtract(1, 'day');
+    console.log("yesterday", yesterday);
+
     let todayCounts = await TodayCount.findAll(
-      { attributes: ['productId', 'productName', 'today' ]});
+      { attributes: ['productId', 'productName', 'today', 'cart', 'wish', 'access'], 
+        where: {[Op.and]: [{ today: {[Op.gte]: yesterday }},{productId : {[Op.in]: productIdArray}}]},
+        order: [["access", "ASC"]]
+      });
+    
+      // console.log("todayCounts",todayCounts);
     
     // productId의 중복을 제거한 모든 레코드 취득
-    todayCounts = todayCounts.filter((item, i) => {
-      return (
-        todayCounts.findIndex((item2, j) => {
-          return item.dataValues.productId === item2.dataValues.productId;
-        }) === i
-      );
-    });
+    // todayCounts = todayCounts.filter((item, i) => {
+    //   return (
+    //     todayCounts.findIndex((item2, j) => {
+    //       return item.dataValues.productId === item2.dataValues.productId;
+    //     }) === i
+    //   );
+    // });
     return res.json(todayCounts);
   } catch (error) {
     next(error);
