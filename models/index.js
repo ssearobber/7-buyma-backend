@@ -23,4 +23,7 @@ db.TodayCount = TodayCount;
 User.init(sequelize);
 TodayCount.init(sequelize);
 
+User.associate(db);
+Comment.associate(db);
+
 module.exports = db;
