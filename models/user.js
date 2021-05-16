@@ -30,13 +30,7 @@ module.exports = class User extends Model {
       }
     );
   }
-  // static associate(db) {
-  //   db.User.hasMany(db.Workspace, { as: "Owned", foreignKey: "OwnerId" });
-  //   db.User.belongsToMany(db.Workspace, {
-  //     through: db.WorkspaceMember,
-  //     as: "Workspaces",
-  //   });
-  //   db.User.belongsToMany(db.Channel, { through: "ChannelMembers" });
-  //   db.User.hasMany(db.ChannelChat);
-  // }
+  static associate(db) {
+    db.User.hasMany(db.Comment);
+  }
 };

@@ -41,7 +41,7 @@ router.get("/products", isLoggedIn , async (req, res, next) => {
 router.get("/product/:productId", isLoggedIn , async (req, res, next) => {
   try {
     const todayCounts = await TodayCount.findAll(
-      { attributes: ['productId', 'productName', 'today', 'cart' , 'wish', 'access', 'link' ], where: { productId: req.params.productId }, order: [["today", "ASC"]],});
+      { attributes: ['productId', 'productName', 'today', 'cart' , 'wish', 'access', 'link'], where: { productId: req.params.productId }, order: [["today", "ASC"]],});
     return res.json(todayCounts);
   } catch (error) {
     next(error);
