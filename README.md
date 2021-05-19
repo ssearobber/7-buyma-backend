@@ -10,3 +10,7 @@ product리스트 추출부분
 - 1.distinct로 중복제거 productId 취득 2. 배열 productId 취득, 날짜 max만 취득, sort access 오름차순
 - 어제 데이터로 product목록을 최신화 (어제날짜 > db의today)
 [raw sql 참고](https://sequelize.org/master/manual/raw-queries.html)
+
+2021/05/16
+댓글 테이블 추가
+- api추가

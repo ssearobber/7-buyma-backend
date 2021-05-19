@@ -8,6 +8,7 @@ const { sequelize } = require("../models");
 const { isNotLoggedIn, isLoggedIn } = require("./middlewares");
 const User = require("../models/user");
 const TodayCount = require("../models/todayCount");
+const Comment = require("../models/comment");
 
 const router = express.Router();
 
@@ -47,6 +48,36 @@ router.get("/product/:productId", isLoggedIn , async (req, res, next) => {
     next(error);
   }
 });
+
+router.post("/comments", isLoggedIn, async (req, res, next) => {
+  if (!req.body.productId ) {
+    return res.status(403).send("productId가 없습니다.");
+  }
+
+  try {
+    const comment = await Comment.create({
+      author: req.body.author,
+      email: req.body.email,
+      content: req.body.content,
+      datetime: req.body.datetime,
+      productId: req.body.productId,
+    });
+    res.status(201).send("ok");
+  } catch (error) {
+      console.error(error);
+      next(error); // status 500
+  }
+})
+
+router.get("/comments/:productId", isLoggedIn, async (req, res, next) => {
+  try {
+    const comments = await Comment.findAll(
+      { attributes: ['author', 'email', 'content', 'datetime' , 'productId'], where: { productId: req.params.productId }, order: [["datetime", "ASC"]],});
+    return res.json(comments);
+  } catch (error) {
+    next(error);
+  }
+})
 
 router.get("/users", (req, res, next) => {
   return res.json(req.user || false);
