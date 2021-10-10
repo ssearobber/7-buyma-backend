@@ -43,4 +43,8 @@ route | HTTP Method  | request | response
 
 
 <br></br>
-- erd 정리
+- erd 정리  
+
+![캡처](/image/bumay_refactoring.png)
+
+[erd 링크](https://www.erdcloud.com/d/kTvSsGxeQ9MuzsDi5)
