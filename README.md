@@ -36,8 +36,8 @@ route | HTTP Method  | request | response
 /users/logout | post | | 
 /users | get | | 
 /users | post | email: string , password: number , nickname: string | 
-/products | get | | productId: string , productName: string , today: string , cart: string , wish: string , access: string
-/product/:productId | get | | productId: string , productName: string , today: string , cart: string , wish: string , access: string , link: string
+/products | get | | productId: string , productName: string , today: string , cart: number , wish: number , access: number
+/product/:productId | get | | productId: string , productName: string , today: string , cart: number , wish: number , access: number , link: string
 /comments | post | productId: string |
 /comments/:productId | get | | author: string , email: string , content: string , datetime: string , productId: string
 
