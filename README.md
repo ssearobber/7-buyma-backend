@@ -19,12 +19,15 @@ product리스트 추출부분
 일일 데이터(access, wish...) 계산 수정
 - 전날 데이터 - 오늘 데이터 ⇨ 
 
-
-
-
---------------------------
+---
 2021/10/10  
-리펙토링 시작
+리펙토링 시작  
+[사이트 링크](https://buyma.netlify.app/login)
+1. heroku -> aws
+2. nodejs -> nestjs
+3. 젠킨스를 이용한 자동 배포
+4. 모니터링 기능  
+<br></br>
 - route body값 정리  
 
 route | HTTP Method  | request | response
