@@ -25,10 +25,16 @@ product리스트 추출부분
 --------------------------
 2021/10/10  
 리펙토링 시작
-- body값 정리  
-|제목|내용|설명|
-|------|---|---|
-|테스트1|테스트2|테스트3|
-|테스트1|테스트2|테스트3|
-|테스트1|테스트2|테스트3|
+- route body값 정리  
+
+route | HTTP Method  | request | response
+----- | ----- | ----- | -----
+/users/login | post | 추가할 | 수있다
+/users/logout | post | *강조 기능이* | **작동한다**
+/users | get | 추가할 | 수있다
+/users | post | 추가할 | 수있다
+/products | get | 추가할 | 수있다
+/product/:productId | post | 추가할 | 수있다
+/comments | get | 추가할 | 수있다
+/comments/:productId | post | 추가할 | 수있다
 
