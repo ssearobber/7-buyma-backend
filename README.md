@@ -41,3 +41,6 @@ route | HTTP Method  | request | response
 /comments | post | productId: string |
 /comments/:productId | get | | author: string , email: string , content: string , datetime: string , productId: string
 
+
+<br></br>
+- erd 정리
