@@ -29,12 +29,12 @@ product리스트 추출부분
 
 route | HTTP Method  | request | response
 ----- | ----- | ----- | -----
-/users/login | post | 추가할 | 수있다
-/users/logout | post | *강조 기능이* | **작동한다**
-/users | get | 추가할 | 수있다
-/users | post | 추가할 | 수있다
-/products | get | 추가할 | 수있다
-/product/:productId | post | 추가할 | 수있다
-/comments | get | 추가할 | 수있다
-/comments/:productId | post | 추가할 | 수있다
+/users/login | post | email: string , password: number | 
+/users/logout | post | | 
+/users | get | | 
+/users | post | email: string , password: number , nickname: string | 
+/products | get | | productId: string , productName: string , today: string , cart: string , wish: string , access: string
+/product/:productId | get | | productId: string , productName: string , today: string , cart: string , wish: string , access: string , link: string
+/comments | post | productId: string |
+/comments/:productId | get | | author: string , email: string , content: string , datetime: string , productId: string
 
