@@ -34,7 +34,7 @@ route | HTTP Method  | request | response
 ----- | ----- | ----- | -----
 /users/login | post | email: string , password: number | 
 /users/logout | post | | 
-/users | get | | 
+/users | get | | email: string , password: number , nickname: string
 /users | post | email: string , password: number , nickname: string | 
 /products | get | | productId: string , productName: string , today: string , cart: number , wish: number , access: number
 /product/:productId | get | | productId: string , productName: string , today: string , cart: number , wish: number , access: number , link: string
