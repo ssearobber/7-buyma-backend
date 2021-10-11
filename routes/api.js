@@ -25,14 +25,19 @@ router.get("/products", isLoggedIn , async (req, res, next) => {
     
     let productIdArray = productIds.map(({ productId }) => productId)
 
-    let yesterday = dayjs().subtract(1, 'day');
-
+    // let yesterday = dayjs().subtract(1, 'day');
+    // console.log("yesterday : ",yesterday);
+    // let todayCounts = await TodayCount.findAll(
+    //   { attributes: ['productId', 'productName', 'today', 'cart', 'wish', 'access'], 
+    //     where: {[Op.and]: [{ today: {[Op.gte]: yesterday }},{productId : {[Op.in]: productIdArray}}]},
+    //     order: [["access", "DESC"]]
+    //   });
     let todayCounts = await TodayCount.findAll(
       { attributes: ['productId', 'productName', 'today', 'cart', 'wish', 'access'], 
-        where: {[Op.and]: [{ today: {[Op.gte]: yesterday }},{productId : {[Op.in]: productIdArray}}]},
+        where: {[Op.and]: [{ id: {[Op.between]: [99344, 99994], }},{productId : {[Op.in]: productIdArray}}]},
         order: [["access", "DESC"]]
       });
-    
+    console.log("todayCounts : ",todayCounts);
     return res.json(todayCounts);
   } catch (error) {
     next(error);
@@ -80,6 +85,7 @@ router.get("/comments/:productId", isLoggedIn, async (req, res, next) => {
 })
 
 router.get("/users", (req, res, next) => {
+  // console.log("req.user" , req.user);
   return res.json(req.user || false);
 });
 
