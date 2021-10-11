@@ -34,7 +34,7 @@ router.get("/products", isLoggedIn , async (req, res, next) => {
     //   });
     let todayCounts = await TodayCount.findAll(
       { attributes: ['productId', 'productName', 'today', 'cart', 'wish', 'access'], 
-        where: {[Op.and]: [{ id: {[Op.between]: [99344, 99994], }},{productId : {[Op.in]: productIdArray}}]},
+        where: {[Op.and]: [{ id: {[Op.between]: [99344, 99994] }},{productId : {[Op.in]: productIdArray}}]},
         order: [["access", "DESC"]]
       });
     console.log("todayCounts : ",todayCounts);
