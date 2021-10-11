@@ -55,7 +55,7 @@ const sessionOption = {
   secret: process.env.COOKIE_SECRET,
   cookie: {
     httpOnly: true,
-    sameSite: "none",
+    // sameSite: "none",
   },
 };
 if (prod) {
