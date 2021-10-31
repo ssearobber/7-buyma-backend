@@ -9,21 +9,27 @@ const { isNotLoggedIn, isLoggedIn } = require("./middlewares");
 const User = require("../models/user");
 const TodayCount = require("../models/todayCount");
 const Comment = require("../models/comment");
-const Product = require('../models/product');
 
 const router = express.Router();
 
 router.get("/products", isLoggedIn , async (req, res, next) => {
   try {
-    let buymaProductIds = await Product.findAll({attributes: ['buyma_product_id']});
+    let query = `
+      SELECT distinct productId FROM todayCount
+    `;
+    let productIds = await sequelize.query(query, 
+        {
+          type: QueryTypes.SELECT, 
+          raw: true
+    });
     
-    let buymaProductIdArray = buymaProductIds.map(({ buyma_product_id }) => buyma_product_id);
+    let productIdArray = productIds.map(({ productId }) => productId)
 
     let yesterday = dayjs().subtract(1, 'day');
     // console.log("yesterday : ",yesterday);
     let todayCounts = await TodayCount.findAll(
-      { attributes: ['buyma_product_id', 'buyma_product_name', 'today', 'cart', 'wish', 'access'], 
-        where: {[Op.and]: [{ today: {[Op.gte]: yesterday }},{buyma_product_id : {[Op.in]: buymaProductIdArray}}]},
+      { attributes: ['productId', 'productName', 'today', 'cart', 'wish', 'access'], 
+        where: {[Op.and]: [{ today: {[Op.gte]: yesterday }},{productId : {[Op.in]: productIdArray}}]},
         order: [["access", "DESC"]]
       });
     // let todayCounts = await TodayCount.findAll(
@@ -80,7 +86,6 @@ router.get("/comments/:productId", isLoggedIn, async (req, res, next) => {
 
 router.get("/users", (req, res, next) => {
   // console.log("req.user" , req.user);
-  // console.log("req" , req);
   return res.json(req.user || false);
 });
 
@@ -94,18 +99,11 @@ router.post("/users", isNotLoggedIn, async (req, res, next) => {
     if (exUser) {
       return res.status(403).send("이미 사용 중인 아이디입니다.");
     }
-    let today = dayjs().format('YYYY/MM/DD');
     const hashedPassword = await bcrypt.hash(req.body.password, 12);
     const user = await User.create({
       email: req.body.email,
       nickname: req.body.nickname,
       password: hashedPassword,
-      isblock: false,
-      role: "user",
-      create_id: req.body.nickname,
-      date_created: today,
-      update_id: req.body.nickname,
-      last_updated: today,
     });
     res.status(201).send("ok");
   } catch (error) {
@@ -128,7 +126,6 @@ router.post("/users/login", isNotLoggedIn, (req, res, next) => {
         console.error(loginErr);
         return next(loginErr);
       }
-      // console.log("user in user.id of api.js", user.id);
       return res.status(200).json(
         await User.findOne({
           where: { id: user.id },

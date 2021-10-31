@@ -1,43 +1,28 @@
 const Sequelize = require('sequelize');
 
-module.exports = class TodayCount extends Sequelize.Model {
+module.exports = class Product extends Sequelize.Model {
   static init(sequelize) {
     return super.init({
       user_id: {
         type: Sequelize.STRING(100),
         allowNull: false,
       },
-      product_id: {
-        type: Sequelize.STRING(100),
-        allowNull: false,
-      },
       buyma_product_id: {
-        type: Sequelize.STRING(100),
+        type: Sequelize.STRING(20),
         allowNull: false,
+        unique: true,
       },
       buyma_product_name: {
         type: Sequelize.TEXT,
         allowNull: false,
       },
-      today: {
-        type: Sequelize.DATE,
-        allowNull: false
-      },
-      cart: {
-        type: Sequelize.INTEGER.UNSIGNED,
-        allowNull: false,
-      },
-      wish: {
-        type: Sequelize.INTEGER.UNSIGNED,
-        allowNull: false,
-      },
-      access: {
-        type: Sequelize.INTEGER.UNSIGNED,
-        allowNull: false,
-      },
-      link: {
+      buyma_product_status: {
         type: Sequelize.TEXT,
         allowNull: false,
+      },
+      buyma_product_realease_date: {
+        type: Sequelize.TEXT,
+        allowNull: false
       },
       create_id: {
         type: Sequelize.STRING(100),
@@ -59,8 +44,8 @@ module.exports = class TodayCount extends Sequelize.Model {
       sequelize,
       timestamps: false,
       underscored: false,
-      modelName: 'TodayCount',
-      tableName: 'product_today_count',
+      modelName: 'Product',
+      tableName: 'product',
       paranoid: false,
       charset: 'utf8',
       collate: 'utf8_general_ci',

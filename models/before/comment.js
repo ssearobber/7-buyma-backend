@@ -5,14 +5,6 @@ module.exports = class Comment extends Sequelize.Model {
     return super.init(
       {
         // id가 기본적으로 들어있다.
-        user_id: {
-          type: Sequelize.STRING(100),
-          allowNull: false,
-        },
-        product_id: {
-          type: Sequelize.STRING(100),
-          allowNull: false,
-        },
         author: {
           type: Sequelize.TEXT,
           allowNull: false,
@@ -29,26 +21,13 @@ module.exports = class Comment extends Sequelize.Model {
           type: Sequelize.DATE,
           allowNull: false
         },
-        create_id: {
-          type: Sequelize.STRING(100),
-          allowNull: false
+        productId: {
+          type: Sequelize.STRING(20),
+          allowNull: false,
         },
-        date_created: {
-          type: Sequelize.DATE,
-          allowNull: false
-        },
-        update_id: {
-          type: Sequelize.STRING(100),
-          allowNull: false
-        },
-        last_updated: {
-          type: Sequelize.DATE,
-          allowNull: false
-        }
       },
       {
         modelName: "Comment",
-        timestamps: false,
         tableName: "comment",
         paranoid: true,
         charset: "utf8mb4",

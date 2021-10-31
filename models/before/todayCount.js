@@ -3,19 +3,11 @@ const Sequelize = require('sequelize');
 module.exports = class TodayCount extends Sequelize.Model {
   static init(sequelize) {
     return super.init({
-      user_id: {
-        type: Sequelize.STRING(100),
+      productId: {
+        type: Sequelize.STRING(20),
         allowNull: false,
       },
-      product_id: {
-        type: Sequelize.STRING(100),
-        allowNull: false,
-      },
-      buyma_product_id: {
-        type: Sequelize.STRING(100),
-        allowNull: false,
-      },
-      buyma_product_name: {
+      productName: {
         type: Sequelize.TEXT,
         allowNull: false,
       },
@@ -39,28 +31,20 @@ module.exports = class TodayCount extends Sequelize.Model {
         type: Sequelize.TEXT,
         allowNull: false,
       },
-      create_id: {
-        type: Sequelize.STRING(100),
-        allowNull: false
-      },
-      date_created: {
+      createdAt: {
         type: Sequelize.DATE,
-        allowNull: false
+        allowNull: true
       },
-      update_id: {
-        type: Sequelize.STRING(100),
-        allowNull: false
-      },
-      last_updated: {
+      updatedAt: {
         type: Sequelize.DATE,
-        allowNull: false
+        allowNull: true
       }
     }, {
       sequelize,
       timestamps: false,
       underscored: false,
       modelName: 'TodayCount',
-      tableName: 'product_today_count',
+      tableName: 'todayCount',
       paranoid: false,
       charset: 'utf8',
       collate: 'utf8_general_ci',

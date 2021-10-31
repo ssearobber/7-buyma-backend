@@ -19,35 +19,10 @@ module.exports = class User extends Model {
           type: DataTypes.STRING(100),
           allowNull: false, // 필수
         },
-        isblock: {
-          type: DataTypes.BOOLEAN,
-          allowNull: false
-        },
-        role: {
-          type: DataTypes.STRING(30),
-          allowNull: false
-        },
-        create_id: {
-          type: DataTypes.STRING(100),
-          allowNull: false
-        },
-        date_created: {
-          type: DataTypes.DATE,
-          allowNull: false
-        },
-        update_id: {
-          type: DataTypes.STRING(100),
-          allowNull: false
-        },
-        last_updated: {
-          type: DataTypes.DATE,
-          allowNull: false
-        }
       },
       {
         modelName: "User",
-        timestamps: false,
-        tableName: "user",
+        tableName: "users",
         paranoid: true,
         charset: "utf8",
         collate: "utf8_general_ci", // 한글 저장

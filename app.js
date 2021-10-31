@@ -55,9 +55,9 @@ const sessionOption = {
   secret: process.env.COOKIE_SECRET,
   cookie: {
     httpOnly: true,
-    sameSite: "none",
+    // sameSite: "none",
   },
-};
+}; // sameSite: "none"를 하게되면 passport.deserializeUser가 호출이 안되서 req.user에 값이 셋팅이 안됨
 if (prod) {
   sessionOption.cookie.secure = true;
   sessionOption.cookie.proxy = true;
