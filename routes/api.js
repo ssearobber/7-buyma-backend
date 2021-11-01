@@ -50,7 +50,7 @@ router.post("/comments", isLoggedIn, async (req, res, next) => {
   try {
     let buymaProductResult = await Product.findOne({
                     where: { buyma_product_id: req.body.productId}});
-
+    let today = dayjs().format('YYYY/MM/DD');
     const comment = await Comment.create({
       user_id: req.user.id,
       product_id: buymaProductResult.id,
