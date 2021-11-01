@@ -72,8 +72,11 @@ router.post("/comments", isLoggedIn, async (req, res, next) => {
 
 router.get("/comments/:productId", isLoggedIn, async (req, res, next) => {
   try {
+    let buymaProductResult = await Product.findOne({
+                    where: { buyma_product_id: req.params.productId}});
+
     const comments = await Comment.findAll(
-      { attributes: ['author', 'email', 'content', 'datetime' , 'productId'], where: { productId: req.params.productId }, order: [["datetime", "ASC"]],});
+      { attributes: ['author', 'email', 'content', 'datetime'], where: { productId: buymaProductResult.id }, order: [["datetime", "ASC"]],});
     return res.json(comments);
   } catch (error) {
     next(error);
