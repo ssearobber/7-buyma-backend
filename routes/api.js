@@ -44,16 +44,24 @@ router.get("/product/:productId", isLoggedIn , async (req, res, next) => {
 
 router.post("/comments", isLoggedIn, async (req, res, next) => {
   if (!req.body.productId ) {
-    return res.status(403).send("buyma_product_id가 없습니다.");
+    return res.status(403).send("productId가 없습니다.");
   }
 
   try {
+    let buymaProductResult = await Product.findOne({
+                    where: { buyma_product_id: req.body.productId}});
+
     const comment = await Comment.create({
+      user_id: req.user.id,
+      product_id: buymaProductResult.id,
       author: req.body.author,
       email: req.body.email,
       content: req.body.content,
       datetime: req.body.datetime,
-      productId: req.body.productId,
+      create_id: req.user.id,
+      date_created: today,
+      update_id: req.user.id,
+      last_updated: today,
     });
     res.status(201).send("ok");
   } catch (error) {
