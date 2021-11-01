@@ -26,12 +26,6 @@ router.get("/products", isLoggedIn , async (req, res, next) => {
         where: {[Op.and]: [{ today: {[Op.gte]: yesterday }},{buyma_product_id : {[Op.in]: buymaProductIdArray}}]},
         order: [["access", "DESC"]]
       });
-    // let todayCounts = await TodayCount.findAll(
-    //   { attributes: ['productId', 'productName', 'today', 'cart', 'wish', 'access'], 
-    //     where: {[Op.and]: [{ id: {[Op.between]: [99344, 99994] }},{productId : {[Op.in]: productIdArray}}]},
-    //     order: [["access", "DESC"]]
-    //   });
-    // console.log("todayCounts : ",todayCounts);
     return res.json(todayCounts);
   } catch (error) {
     next(error);
@@ -41,7 +35,7 @@ router.get("/products", isLoggedIn , async (req, res, next) => {
 router.get("/product/:productId", isLoggedIn , async (req, res, next) => {
   try {
     const todayCounts = await TodayCount.findAll(
-      { attributes: ['productId', 'productName', 'today', 'cart' , 'wish', 'access', 'link'], where: { productId: req.params.productId }, order: [["today", "ASC"]],});
+      { attributes: ['buyma_product_id', 'buyma_product_name', 'today', 'cart' , 'wish', 'access', 'link'], where: { productId: req.params.productId }, order: [["today", "ASC"]],});
     return res.json(todayCounts);
   } catch (error) {
     next(error);
@@ -50,7 +44,7 @@ router.get("/product/:productId", isLoggedIn , async (req, res, next) => {
 
 router.post("/comments", isLoggedIn, async (req, res, next) => {
   if (!req.body.productId ) {
-    return res.status(403).send("productId가 없습니다.");
+    return res.status(403).send("buyma_product_id가 없습니다.");
   }
 
   try {
