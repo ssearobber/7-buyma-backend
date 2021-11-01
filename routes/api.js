@@ -58,9 +58,9 @@ router.post("/comments", isLoggedIn, async (req, res, next) => {
       email: req.body.email,
       content: req.body.content,
       datetime: req.body.datetime,
-      create_id: req.user.id,
+      create_id: req.body.author,
       date_created: today,
-      update_id: req.user.id,
+      update_id: req.body.author,
       last_updated: today,
     });
     res.status(201).send("ok");
