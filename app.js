@@ -55,7 +55,7 @@ const sessionOption = {
   secret: process.env.COOKIE_SECRET,
   cookie: {
     httpOnly: true,
-    // sameSite: "none",
+    sameSite: "none",
   },
 };
 // 1. 개발모드에서 sameSite: "none"를 하게되면 passport.deserializeUser가 호출이 안되서 req.user에 값이 셋팅이 안됨
