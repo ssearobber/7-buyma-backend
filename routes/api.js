@@ -33,23 +33,7 @@ router.get("/products", isLoggedIn , async (req, res, next) => {
         where: {[Op.and]: [{ today: result.today },{buyma_product_id : {[Op.in]: buymaProductIdArray}}]},
         order: [["access", "DESC"]]
       });
-    // let todayCounts = await TodayCount.findAll(
-    //   { attributes: ['buyma_product_id', 'buyma_product_name', 'today', 'cart', 'wish', 'access'], 
-    //     where: {[Op.and]: [{ today: {[Op.gte]: yesterday }},{buyma_product_id : {[Op.in]: buymaProductIdArray}}]},
-    //     order: [["access", "DESC"]]
-    //   });
-    let max = 0;
-    let lastestProuduct = [];
-    for(let i = 0 ; result.length-1 ; i++) {
-      for(let obj in todayCounts) {
-        if (obj.buyma_product_id == result[i]) {
-          if(obj.today > max) {
-            obj.today = max;
-          }
-        }
-      }
-    }
-
+      // console.log("todayCounts : ",todayCounts);
     return res.json(todayCounts);
   } catch (error) {
     next(error);
