@@ -1,4 +1,5 @@
 const { Op, QueryTypes } = require("sequelize");
+const Sequelize = require('sequelize');
 const express = require("express");
 const passport = require("passport");
 const bcrypt = require("bcrypt");
@@ -19,13 +20,36 @@ router.get("/products", isLoggedIn , async (req, res, next) => {
     
     let buymaProductIdArray = buymaProductIds.map(({ buyma_product_id }) => buyma_product_id);
 
-    let yesterday = dayjs().subtract(1, 'day');
+    // let yesterday = dayjs().subtract(1, 'day');
     // console.log("yesterday : ",yesterday);
+
+    let result = await TodayCount.findOne(
+      { attributes: ['buyma_product_id', [sequelize.fn('max', sequelize.col('today')),'today']],
+        where: {buyma_product_id : {[Op.in]: buymaProductIdArray}},
+        group: ['buyma_product_id']});
+    // console.log("lastDate",result);
     let todayCounts = await TodayCount.findAll(
       { attributes: ['buyma_product_id', 'buyma_product_name', 'today', 'cart', 'wish', 'access'], 
-        where: {[Op.and]: [{ today: {[Op.gte]: yesterday }},{buyma_product_id : {[Op.in]: buymaProductIdArray}}]},
+        where: {[Op.and]: [{ today: result.today },{buyma_product_id : {[Op.in]: buymaProductIdArray}}]},
         order: [["access", "DESC"]]
       });
+    // let todayCounts = await TodayCount.findAll(
+    //   { attributes: ['buyma_product_id', 'buyma_product_name', 'today', 'cart', 'wish', 'access'], 
+    //     where: {[Op.and]: [{ today: {[Op.gte]: yesterday }},{buyma_product_id : {[Op.in]: buymaProductIdArray}}]},
+    //     order: [["access", "DESC"]]
+    //   });
+    let max = 0;
+    let lastestProuduct = [];
+    for(let i = 0 ; result.length-1 ; i++) {
+      for(let obj in todayCounts) {
+        if (obj.buyma_product_id == result[i]) {
+          if(obj.today > max) {
+            obj.today = max;
+          }
+        }
+      }
+    }
+
     return res.json(todayCounts);
   } catch (error) {
     next(error);
