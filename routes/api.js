@@ -19,9 +19,9 @@ router.get('/products', isLoggedIn, async (req, res, next) => {
   try {
     let buymaProductIds = await Product.findAll({ attributes: ['buyma_product_id'] });
 
-    if (!buymaProductIds) {
-      return res.json('500');
-    }
+    // if (!buymaProductIds) {
+    //   return res.json('500');
+    // }
 
     let buymaProductIdArray = buymaProductIds.map(({ buyma_product_id }) => buyma_product_id);
 
