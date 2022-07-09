@@ -19,6 +19,10 @@ router.get('/products', isLoggedIn, async (req, res, next) => {
   try {
     let buymaProductIds = await Product.findAll({ attributes: ['buyma_product_id'] });
 
+    if (!buymaProductIds) {
+      return res.status(500).send('db에 데이터가 존재하지 않습니다.');
+    }
+
     let buymaProductIdArray = buymaProductIds.map(({ buyma_product_id }) => buyma_product_id);
 
     // let yesterday = dayjs().subtract(1, 'day');
