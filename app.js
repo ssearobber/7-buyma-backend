@@ -49,15 +49,29 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
-const sessionOption = {
-  resave: false,
-  saveUninitialized: false,
-  secret: process.env.COOKIE_SECRET,
-  cookie: {
-    httpOnly: true,
-    sameSite: 'none',
-  },
-};
+
+let sessionOption = {};
+if (prod) {
+  sessionOption = {
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.COOKIE_SECRET,
+    cookie: {
+      httpOnly: true,
+      sameSite: 'none',
+    },
+  };
+} else {
+  sessionOption = {
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.COOKIE_SECRET,
+    cookie: {
+      httpOnly: true,
+    },
+  };
+}
+
 // 1. 개발모드에서 sameSite: "none"를 하게되면 passport.deserializeUser가 호출이 안되서 req.user에 값이 셋팅이 안됨
 // 2. 배포모드에서 sameSite: "none"가 없으면 페이지 이동이 안됨
 if (prod) {
