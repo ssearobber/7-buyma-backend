@@ -1,4 +1,4 @@
-const { Op, QueryTypes } = require('sequelize');
+const { Op, QueryTypes, where } = require('sequelize');
 const Sequelize = require('sequelize');
 const express = require('express');
 const passport = require('passport');
@@ -12,6 +12,10 @@ const TodayCount = require('../models/todayCount');
 const Comment = require('../models/comment');
 const Product = require('../models/product');
 const Order = require('../models/order');
+
+const OtherSeller = require('../models/otherSeller');
+const OtherSellerProduct = require('../models/otherSellerProduct');
+const OtherSellerProductTodayCount = require('../models/otherSellerProductTodayCount');
 
 const router = express.Router();
 
@@ -226,4 +230,112 @@ router.get('/orders', isNotLoggedIn, async (req, res, next) => {
   return res.json(orders);
 });
 
+router.get('/otherSellers', async (req, res, next) => {
+  try {
+    const otherSellers = await OtherSeller.findAll({
+      attributes: ['buyma_user_id', 'buyma_user_name', 'buyma_home_url'],
+    });
+    return res.json(otherSellers);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/otherSellers/:buymaId', isLoggedIn, async (req, res, next) => {
+  try {
+    let buymaProductIds = await OtherSellerProduct.findAll({
+      attributes: ['buyma_product_id'],
+      where: { other_seller_id: req.params.buymaId },
+    });
+
+    // console.log('buymaProductIds', buymaProductIds);
+
+    let buymaProductIdArray = buymaProductIds.map(({ buyma_product_id }) => buyma_product_id);
+
+    // let yesterday = dayjs().subtract(1, 'day');
+    // console.log("yesterday : ",yesterday);
+
+    let result = await OtherSellerProductTodayCount.findOne({
+      attributes: ['buyma_product_id', [sequelize.fn('max', sequelize.col('today')), 'today']],
+      where: { buyma_product_id: { [Op.in]: buymaProductIdArray } },
+      group: ['buyma_product_id'],
+    });
+    // console.log("lastDate",result);
+    let todayCounts = await OtherSellerProductTodayCount.findAll({
+      attributes: ['buyma_product_id', 'buyma_product_name', 'today', 'wish', 'access'],
+      where: {
+        [Op.and]: [{ today: result.today }, { buyma_product_id: { [Op.in]: buymaProductIdArray } }],
+      },
+      order: [['access', 'DESC']],
+    });
+    // console.log('todayCounts : ', todayCounts);
+    return res.json(todayCounts);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/otherSeller-product/:productId', isLoggedIn, async (req, res, next) => {
+  try {
+    const todayCounts = await OtherSellerProductTodayCount.findAll({
+      attributes: ['buyma_product_id', 'buyma_product_name', 'today', 'wish', 'access', 'link'],
+      where: { buyma_product_id: req.params.productId },
+      order: [['today', 'ASC']],
+    });
+    return res.json(todayCounts);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/otherSeller-comments', isLoggedIn, async (req, res, next) => {
+  if (!req.body.productId) {
+    return res.status(403).send('productId가 없습니다.');
+  }
+
+  try {
+    let buymaProductResult = await OtherSellerProduct.findOne({
+      where: { buyma_product_id: req.body.productId },
+    });
+    let today = dayjs().format('YYYY/MM/DD');
+
+    const comment = await Comment.create({
+      user_id: req.user.id,
+      product_id: buymaProductResult.id,
+      author: req.body.author,
+      email: req.body.email,
+      content: req.body.content,
+      datetime: req.body.datetime,
+      create_id: req.body.author,
+      date_created: today,
+      update_id: req.body.author,
+      last_updated: today,
+    });
+    res.status(201).send('ok');
+  } catch (error) {
+    console.error(error);
+    next(error); // status 500
+  }
+});
+
+router.get('/otherSeller-comments/:productId', isLoggedIn, async (req, res, next) => {
+  try {
+    let buymaProductResult = await OtherSellerProduct.findOne({
+      where: { buyma_product_id: req.params.productId },
+    });
+    let comments;
+    if (buymaProductResult) {
+      comments = await Comment.findAll({
+        attributes: ['author', 'email', 'content', 'datetime'],
+        where: { product_id: buymaProductResult.id },
+        order: [['datetime', 'ASC']],
+      });
+    } else {
+      comments = [];
+    }
+    return res.json(comments);
+  } catch (error) {
+    next(error);
+  }
+});
 module.exports = router;
