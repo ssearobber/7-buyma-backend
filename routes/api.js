@@ -243,9 +243,6 @@ router.get('/otherSellers', async (req, res, next) => {
 
 router.get('/otherSellers/:buymaId', isLoggedIn, async (req, res, next) => {
   try {
-    // console.log(req.params.buymaId);
-    if (!req.params.buymaId) return res.json([]);
-
     let buymaProductIds = await OtherSellerProduct.findAll({
       attributes: ['buyma_product_id'],
       where: { other_seller_id: req.params.buymaId },
@@ -263,6 +260,8 @@ router.get('/otherSellers/:buymaId', isLoggedIn, async (req, res, next) => {
       where: { buyma_product_id: { [Op.in]: buymaProductIdArray } },
       group: ['buyma_product_id'],
     });
+
+    if (!result) return res.json([]);
     // console.log("lastDate",result);
     let todayCounts = await OtherSellerProductTodayCount.findAll({
       attributes: ['buyma_product_id', 'buyma_product_name', 'today', 'wish', 'access'],
