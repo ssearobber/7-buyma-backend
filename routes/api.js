@@ -243,6 +243,7 @@ router.get('/otherSellers', async (req, res, next) => {
 
 router.get('/otherSellers/:buymaId', isLoggedIn, async (req, res, next) => {
   try {
+    console.log(req.params.buymaId);
     if (!req.params.buymaId) return res.json([]);
 
     let buymaProductIds = await OtherSellerProduct.findAll({
