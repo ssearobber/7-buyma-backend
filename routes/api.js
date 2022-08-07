@@ -16,6 +16,9 @@ const Order = require('../models/order');
 const OtherSeller = require('../models/otherSeller');
 const OtherSellerProduct = require('../models/otherSellerProduct');
 const OtherSellerProductTodayCount = require('../models/otherSellerProductTodayCount');
+const TemporaryProductCount = require('../models/temporaryProductCount');
+const TemporaryOtherSellerProductCount = require('../models/temporaryOtherSellerProductCount');
+const { NUMBER } = require('sequelize');
 
 const router = express.Router();
 
@@ -32,20 +35,27 @@ router.get('/products', isLoggedIn, async (req, res, next) => {
     // let yesterday = dayjs().subtract(1, 'day');
     // console.log("yesterday : ",yesterday);
 
-    let result = await TodayCount.findOne({
+    let maxToday = await TodayCount.findOne({
       attributes: ['buyma_product_id', [sequelize.fn('max', sequelize.col('today')), 'today']],
       where: { buyma_product_id: { [Op.in]: buymaProductIdArray } },
       group: ['buyma_product_id'],
     });
     // console.log("lastDate",result);
-    let todayCounts = await TodayCount.findAll({
+    let todayCounts = await TemporaryProductCount.findAll({
       attributes: ['buyma_product_id', 'buyma_product_name', 'today', 'cart', 'wish', 'access'],
       where: {
-        [Op.and]: [{ today: result.today }, { buyma_product_id: { [Op.in]: buymaProductIdArray } }],
+        [Op.and]: [{ buyma_product_id: { [Op.in]: buymaProductIdArray } }],
       },
-      order: [['access', 'DESC']],
+      include: {
+        model: TodayCount,
+        as: 'TodayCount',
+        where: {
+          [Op.and]: [{ today: maxToday.today }],
+        },
+      },
+      order: [['wish', 'DESC']],
     });
-    // console.log("todayCounts : ",todayCounts);
+    // console.log('todayCounts : ', todayCounts);
     return res.json(todayCounts);
   } catch (error) {
     next(error);
@@ -245,7 +255,9 @@ router.get('/otherSellers/:buymaId', isLoggedIn, async (req, res, next) => {
   try {
     let buymaProductIds = await OtherSellerProduct.findAll({
       attributes: ['buyma_product_id'],
-      where: { other_seller_id: req.params.buymaId },
+      where: {
+        other_seller_id: req.params.buymaId,
+      },
     });
 
     // console.log('buymaProductIds', buymaProductIds);
@@ -255,21 +267,40 @@ router.get('/otherSellers/:buymaId', isLoggedIn, async (req, res, next) => {
     // let yesterday = dayjs().subtract(1, 'day');
     // console.log("yesterday : ",yesterday);
 
-    let result = await OtherSellerProductTodayCount.findOne({
+    let maxToday = await OtherSellerProductTodayCount.findOne({
       attributes: ['buyma_product_id', [sequelize.fn('max', sequelize.col('today')), 'today']],
-      where: { buyma_product_id: { [Op.in]: buymaProductIdArray } },
+      where: {
+        buyma_product_id: { [Op.in]: buymaProductIdArray },
+      },
       group: ['buyma_product_id'],
     });
 
-    if (!result) return res.json([]);
-    // console.log("lastDate",result);
-    let todayCounts = await OtherSellerProductTodayCount.findAll({
+    if (!maxToday) return res.json([]);
+    // console.log("lastDate",maxToday);
+    let wishOfProduct = process.env.WISH_OF_PRODUCT || wishOfProduct;
+    let accessOfProduct = process.env.ACCESS_OF_PRODUCT || accessOfProduct;
+    let wishOfProductNum = Number(wishOfProduct);
+    let accessOfProductNum = Number(accessOfProduct);
+    console.log('wishOfProductNum : ', wishOfProductNum);
+    console.log('accessOfProductNum : ', accessOfProductNum);
+
+    let todayCounts = await TemporaryOtherSellerProductCount.findAll({
       attributes: ['buyma_product_id', 'buyma_product_name', 'today', 'wish', 'access'],
       where: {
-        [Op.and]: [{ today: result.today }, { buyma_product_id: { [Op.in]: buymaProductIdArray } }],
+        [Op.and]: [{ buyma_product_id: { [Op.in]: buymaProductIdArray } }],
       },
-      order: [['access', 'DESC']],
+      include: {
+        model: OtherSellerProductTodayCount,
+        as: 'OtherSellerProductTodayCount',
+        where: {
+          [Op.and]: [{ today: maxToday.today }],
+        },
+      },
+      order: [['wish', 'DESC']],
     });
+
+    // wish: { [Op.gte]: wishOfProductNum },
+    // access: { [Op.gte]: accessOfProductNum },
     // console.log('todayCounts : ', todayCounts);
     return res.json(todayCounts);
   } catch (error) {

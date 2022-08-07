@@ -8,6 +8,8 @@ const Order = require('./order');
 const OtherSeller = require('./otherSeller');
 const OtherSellerProductTodayCount = require('./otherSellerProductTodayCount');
 const OtherSellerProduct = require('./otherSellerProduct');
+const TemporaryProductCount = require('./temporaryProductCount');
+const TemporaryOtherSellerProductCount = require('./temporaryOtherSellerProductCount');
 
 const env = process.env.NODE_ENV || 'development';
 const config = require('../config/config')[env];
@@ -26,6 +28,8 @@ db.Order = Order;
 db.OtherSeller = OtherSeller;
 db.OtherSellerProduct = OtherSellerProduct;
 db.OtherSellerProductTodayCount = OtherSellerProductTodayCount;
+db.TemporaryProductCount = TemporaryProductCount;
+db.TemporaryOtherSellerProductCount = TemporaryOtherSellerProductCount;
 
 User.init(sequelize);
 TodayCount.init(sequelize);
@@ -35,7 +39,17 @@ Order.init(sequelize);
 OtherSeller.init(sequelize);
 OtherSellerProduct.init(sequelize);
 OtherSellerProductTodayCount.init(sequelize);
+TemporaryProductCount.init(sequelize);
+TemporaryOtherSellerProductCount.init(sequelize);
 
+TemporaryProductCount.belongsTo(TodayCount, {
+  foreignKey: 'buyma_product_id',
+  targetKey: 'buyma_product_id',
+});
+TemporaryOtherSellerProductCount.belongsTo(OtherSellerProductTodayCount, {
+  foreignKey: 'buyma_product_id',
+  targetKey: 'buyma_product_id',
+});
 // User.associate(db);
 // Comment.associate(db);
 
