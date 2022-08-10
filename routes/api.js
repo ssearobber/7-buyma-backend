@@ -333,8 +333,8 @@ router.post('/otherSeller-comments', isLoggedIn, async (req, res, next) => {
     let today = dayjs().format('YYYY/MM/DD');
 
     const comment = await Comment.create({
-      user_id: req.user.id,
-      product_id: buymaProductResult.id,
+      user_id: buymaProductResult.other_seller_id,
+      product_id: buymaProductResult.buyma_product_id,
       author: req.body.author,
       email: req.body.email,
       content: req.body.content,
@@ -360,7 +360,7 @@ router.get('/otherSeller-comments/:productId', isLoggedIn, async (req, res, next
     if (buymaProductResult) {
       comments = await Comment.findAll({
         attributes: ['author', 'email', 'content', 'datetime'],
-        where: { product_id: buymaProductResult.id },
+        where: { product_id: buymaProductResult.buyma_product_id },
         order: [['datetime', 'ASC']],
       });
     } else {
