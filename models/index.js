@@ -47,7 +47,10 @@ TemporaryProductCount.belongsTo(TodayCount, {
   targetKey: 'buyma_product_id',
 });
 TemporaryOtherSellerProductCount.belongsTo(OtherSellerProductTodayCount, {
-  foreignKey: 'buyma_product_id',
+  foreignKey: {
+    name: 'buyma_product_id',
+    allowNull: true,
+  },
   targetKey: 'buyma_product_id',
 });
 // User.associate(db);

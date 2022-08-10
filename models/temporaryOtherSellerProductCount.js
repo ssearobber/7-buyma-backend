@@ -5,9 +5,9 @@ module.exports = class TemporaryOtherSellerProductCount extends Sequelize.Model 
     return super.init(
       {
         buyma_product_id: {
-          type: Sequelize.STRING(20),
+          type: Sequelize.STRING(100),
           allowNull: false,
-          unique: true,
+          primaryKey: true,
         },
         buyma_product_name: {
           type: Sequelize.TEXT,
