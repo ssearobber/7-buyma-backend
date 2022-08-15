@@ -289,13 +289,19 @@ router.get('/otherSellers/:buymaId', isLoggedIn, async (req, res, next) => {
       where: {
         [Op.and]: [{ buyma_product_id: { [Op.in]: buymaProductIdArray } }],
       },
-      include: {
-        model: OtherSellerProductTodayCount,
-        as: 'OtherSellerProductTodayCount',
-        where: {
-          [Op.and]: [{ today: maxToday.today }],
+      include: [
+        {
+          model: OtherSellerProductTodayCount,
+          as: 'OtherSellerProductTodayCount',
+          where: {
+            [Op.and]: [{ today: maxToday.today }],
+          },
         },
-      },
+        {
+          model: Comment,
+          as: 'Comments',
+        },
+      ],
       order: [['wish', 'DESC']],
     });
 

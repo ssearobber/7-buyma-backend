@@ -53,6 +53,13 @@ TemporaryOtherSellerProductCount.belongsTo(OtherSellerProductTodayCount, {
   },
   targetKey: 'buyma_product_id',
 });
+TemporaryOtherSellerProductCount.hasMany(Comment, {
+  foreignKey: {
+    name: 'product_id',
+    allowNull: true,
+  },
+  targetKey: 'buyma_product_id',
+});
 // User.associate(db);
 // Comment.associate(db);
 
