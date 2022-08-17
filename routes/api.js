@@ -268,7 +268,7 @@ router.get('/otherSellers/:buymaId', isLoggedIn, async (req, res, next) => {
     // console.log("yesterday : ",yesterday);
 
     let maxToday = await OtherSellerProductTodayCount.findOne({
-      attributes: ['buyma_product_id', [sequelize.fn('max', sequelize.col('today')), 'today']],
+      attributes: [[sequelize.fn('max', sequelize.col('today')), 'today']],
       where: {
         buyma_product_id: { [Op.in]: buymaProductIdArray },
       },
@@ -276,6 +276,9 @@ router.get('/otherSellers/:buymaId', isLoggedIn, async (req, res, next) => {
     });
 
     if (!maxToday) return res.json([]);
+    // console.log('maxToday : ', maxToday.today);
+    let before12Hour = dayjs(maxToday.today).subtract(12, 'hour').format();
+    let after12Hour = dayjs(maxToday.today).add(12, 'hour').format();
     // console.log("lastDate",maxToday);
     let wishOfProduct = process.env.WISH_OF_PRODUCT || wishOfProduct;
     let accessOfProduct = process.env.ACCESS_OF_PRODUCT || accessOfProduct;
@@ -294,7 +297,10 @@ router.get('/otherSellers/:buymaId', isLoggedIn, async (req, res, next) => {
           model: OtherSellerProductTodayCount,
           as: 'OtherSellerProductTodayCount',
           where: {
-            [Op.and]: [{ today: maxToday.today }],
+            today: {
+              [Op.gte]: before12Hour,
+              [Op.lte]: after12Hour,
+            },
           },
         },
         {
@@ -307,7 +313,7 @@ router.get('/otherSellers/:buymaId', isLoggedIn, async (req, res, next) => {
 
     // wish: { [Op.gte]: wishOfProductNum },
     // access: { [Op.gte]: accessOfProductNum },
-    // console.log('todayCounts : ', todayCounts);
+    // console.log('todayCounts : ', todayCounts.length);
     return res.json(todayCounts);
   } catch (error) {
     next(error);
