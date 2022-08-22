@@ -53,7 +53,7 @@ router.get('/products', isLoggedIn, async (req, res, next) => {
           [Op.and]: [{ today: maxToday.today }],
         },
       },
-      order: [['wish', 'DESC']],
+      order: [[{ model: TodayCount, as: 'TodayCount' }, 'wish', 'DESC']],
     });
     // console.log('todayCounts : ', todayCounts);
     return res.json(todayCounts);
@@ -308,7 +308,13 @@ router.get('/otherSellers/:buymaId', isLoggedIn, async (req, res, next) => {
           as: 'Comments',
         },
       ],
-      order: [['wish', 'DESC']],
+      order: [
+        [
+          { model: OtherSellerProductTodayCount, as: 'OtherSellerProductTodayCount' },
+          'access',
+          'DESC',
+        ],
+      ],
     });
 
     // wish: { [Op.gte]: wishOfProductNum },
