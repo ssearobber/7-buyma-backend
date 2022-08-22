@@ -53,7 +53,7 @@ router.get('/products', isLoggedIn, async (req, res, next) => {
           [Op.and]: [{ today: maxToday.today }],
         },
       },
-      order: [[{ model: TodayCount, as: 'TodayCount' }, 'wish', 'DESC']],
+      order: [[{ model: TodayCount, as: 'TodayCount' }, 'access', 'DESC']],
     });
     // console.log('todayCounts : ', todayCounts);
     return res.json(todayCounts);
